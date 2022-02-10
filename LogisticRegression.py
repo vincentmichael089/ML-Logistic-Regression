@@ -8,28 +8,28 @@ class LogisticRegression:
     self._x = []
     self._y = []  
   
-  def linearFunction(data, weights):
+  def linearFunction(self, data, weights):
     return np.dot(data, weights)
 
 
-  def logisticFunction(linearResult):
+  def logisticFunction(self, linearResult):
     return 1 / ( 1 + np.exp(-(linearResult)))
 
-  def updateWeights(weights, learningRate, x, y):
+  def updateWeights(self, weights, x, y):
     temp = np.zeros(len(x))
     for i in range(len(weights)):
-      d = (logisticFunction(linearFunction(x, weights)) - y) * x[i]
-      temp[i] = weights[i] - (learningRate * d)
+      d = (self.logisticFunction(self.linearFunction(x, weights)) - y) * x[i]
+      temp[i] = weights[i] - (self._learningRate * d)
     
     return temp
 
-  def logisticRegressionLoss(yPredicted, yActual):
+  def logisticRegressionLoss(self, yPredicted, yActual):
     loss = -(yActual * np.log(yPredicted) + (1-yActual) * np.log(1-yPredicted))
     meanLoss = loss.mean()
     return meanLoss
 
 
-  def logisticRegressionAccuracy(yPredicted, yActual):
+  def logisticRegressionAccuracy(self, yPredicted, yActual):
     yPredicted = yPredicted.round().astype(int)
     xor = yPredicted ^ yActual
     return np.count_nonzero(xor == 0)/len(xor)
@@ -47,12 +47,12 @@ class LogisticRegression:
       listResult = []
 
       for i in range(len(self._x)):
-        listResult.append(logisticFunction(linearFunction(self._x[i], self._weights)))
-        self._weights = updateWeights(self._weights, 0.1, self._x[i], self._y[i])
+        listResult.append(self.logisticFunction(self.linearFunction(self._x[i], self._weights)))
+        self._weights = self.updateWeights(self._weights, 0.1, self._x[i], self._y[i])
 
       print("epoch: ", epoch + 1, 
-              "\tloss: ", logisticRegressionLoss(np.asarray(listResult), y), 
-              "\taccuracy: ", logisticRegressionAccuracy(np.asarray(listResult), y)
+              "\tloss: ", self.logisticRegressionLoss(np.asarray(listResult), y), 
+              "\taccuracy: ", self.logisticRegressionAccuracy(np.asarray(listResult), y)
       )
 
   def predict(self, x):
@@ -60,7 +60,7 @@ class LogisticRegression:
     if x.ndim == 2:
       listResult = []
       for i in range(len(x)):
-        listResult.append(logisticFunction(linearFunction(x[i], self._weights)))
+        listResult.append(self.logisticFunction(self.linearFunction(x[i], self._weights)))
 
       return listResult
     else: 
